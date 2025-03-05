@@ -12,6 +12,9 @@ import FlowerIcon from "../public/flower.svg";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  
   const heroRef = useRef(null);
 
   // Finds all elements with the .reveal class and stores them in revealContainers. This allows us to loop through each .reveal container and apply animations.
@@ -52,35 +55,41 @@ export default function Home() {
   // }, []);
 
   useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    
     const typeWriter = () => {
       const word = wordsRef.current[wordIndexRef.current];
-      gsap.to(wordRef.current, {
-        opacity: 0,
-        duration: 0.5,
-        onComplete: () => {
-          wordRef.current.innerText = ""; // Clear text
-          let i = 0;
-          const interval = setInterval(() => {
-            wordRef.current.innerText += word[i];
-            i++;
-            if (i === word.length) clearInterval(interval);
-          }, 250); // Slow down the typing effect
-          gsap.to(wordRef.current, { opacity: 1, duration: 0.5 });
-        },
-      });
+      gsap.to(wordRef.current, { opacity: 0, duration: 0.5, onComplete: () => {
+        wordRef.current.innerText = ""; // Clear text
+        let i = 0;
+        const interval = setInterval(() => {
+          wordRef.current.innerText += word[i];
+          i++;
+          if (i === word.length) clearInterval(interval);
+        }, 250); // Slow down the typing effect
+        gsap.to(wordRef.current, { opacity: 1, duration: 0.5 });
+      }});
     };
 
     const interval = setInterval(() => {
-      wordIndexRef.current =
-        (wordIndexRef.current + 1) % wordsRef.current.length;
+      wordIndexRef.current = (wordIndexRef.current + 1) % wordsRef.current.length;
       typeWriter();
     }, 4000); // Increase time between word transitions
 
     typeWriter(); // Run once on mount
     return () => clearInterval(interval);
-  }, []);
+  }, [isLoaded]);
 
   useEffect(() => {
+    if (!isLoaded) return;
+
+    gsap.fromTo(heroRef.current, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" });
+
+
     // Iterates through each .reveal container to apply animations individually. Ensures each element gets its own timeline and animation sequence.
     revealRefs.current.forEach((container, index) => {
       // Finds the <img> inside the .reveal container. The image has its own animation separate from the container.
@@ -126,7 +135,7 @@ export default function Home() {
         scrub: true,
       },
     });
-  }, []);
+  }, [isLoaded]);
 
   return (
     <main ref={mainRef} className={styles.container}>
