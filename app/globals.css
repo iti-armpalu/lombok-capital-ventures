@@ -1,0 +1,20 @@
+:root {
+  --night-forest: #022422;
+  --deep-forest: #00302E;
+  --forest-green: #00423E;
+  --lake-green: #0B6965;
+  --teal-green: #35A19A;
+  --yellow-butter: #FFE39A;
+  --white-bone: #F8F4E3;
+
+  --text-color: var(--forest-green);
+  --background-color: var(--white-bone);
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-beiruti);
+  margin: 0;
+  padding: 0;
+}
